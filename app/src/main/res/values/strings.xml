@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Tech News</string>
+    <string name="editar">Editar</string>
+    <string name="remover">Remover</string>
+    <string name="titulo">Título</string>
+    <string name="escreva_seu_texto">Escreva seu texto…</string>
+    <string name="salvar">Salvar</string>
+</resources>

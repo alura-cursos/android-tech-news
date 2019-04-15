@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:padding="8dp"
+    tools:ignore="UnusedAttribute"
+    tools:showIn="@layout/activity_lista_noticias">
+
+    <TextView
+        android:id="@+id/item_noticia_titulo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@tools:sample/lorem" />
+
+    <TextView
+        android:id="@+id/item_noticia_texto"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="3"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/item_noticia_titulo"
+        app:layout_constraintStart_toStartOf="@id/item_noticia_titulo"
+        app:layout_constraintTop_toBottomOf="@id/item_noticia_titulo"
+        app:layout_constraintVertical_bias="0.0"
+        tools:text="@tools:sample/lorem" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
