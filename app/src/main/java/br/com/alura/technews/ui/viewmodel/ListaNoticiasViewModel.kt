@@ -12,11 +12,7 @@ class ListaNoticiasViewModel(
 ) : ViewModel() {
 
     fun buscaTodos() : LiveData<List<Noticia>> {
-        val liveData = MutableLiveData<List<Noticia>>()
-        repository.buscaTodos(quandoSucesso = { noticiasNovas ->
-            liveData.value = noticiasNovas
-        }, quandoFalha = {})
-        return liveData
+        return repository.buscaTodos()
     }
 
 }
