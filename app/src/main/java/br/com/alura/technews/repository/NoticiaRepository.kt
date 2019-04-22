@@ -23,7 +23,8 @@ class NoticiaRepository(
             quandoFalha = { erro ->
                 val resourceAtual = noticiasEncontradas.value
                 val resourceDeFalha = criaResourceDeFalha<List<Noticia>?>(
-                    resourceAtual, erro)
+                    resourceAtual, erro
+                )
                 noticiasEncontradas.value = resourceDeFalha
             })
         return noticiasEncontradas
@@ -31,44 +32,50 @@ class NoticiaRepository(
 
     fun salva(
         noticia: Noticia
-    ) : LiveData<Resource<Void?>> {
+    ): LiveData<Resource<Void?>> {
         val liveData = MutableLiveData<Resource<Void?>>()
         salvaNaApi(noticia, quandoSucesso = {
             liveData.value = Resource(null)
-        }, quandoFalha = {erro ->
+        }, quandoFalha = { erro ->
             liveData.value = Resource(dado = null, erro = erro)
         })
         return liveData
     }
 
     fun remove(
-        noticia: Noticia,
-        quandoSucesso: () -> Unit,
-        quandoFalha: (erro: String?) -> Unit
-    ) {
-        removeNaApi(noticia, quandoSucesso, quandoFalha)
+        noticia: Noticia
+    ): LiveData<Resource<Void?>> {
+        val liveData = MutableLiveData<Resource<Void?>>()
+        removeNaApi(noticia, quandoSucesso = {
+            liveData.value = Resource(null)
+        }, quandoFalha = { erro ->
+            liveData.value = Resource(null, erro)
+        })
+        return liveData
     }
 
     fun edita(
         noticia: Noticia
-    ) : LiveData<Resource<Void?>> {
+    ): LiveData<Resource<Void?>> {
         val liveData = MutableLiveData<Resource<Void?>>()
         editaNaApi(noticia, quandoSucesso = {
             liveData.value = Resource(null)
-        }, quandoFalha = {erro ->
+        }, quandoFalha = { erro ->
             liveData.value = Resource(dado = null, erro = erro)
         })
         return liveData
     }
 
     fun buscaPorId(
-        noticiaId: Long,
-        quandoSucesso: (noticiaEncontrada: Noticia?) -> Unit
-    ) {
+        noticiaId: Long
+    ): LiveData<Noticia?> {
+        val liveData = MutableLiveData<Noticia?>()
         BaseAsyncTask(quandoExecuta = {
             dao.buscaPorId(noticiaId)
-        }, quandoFinaliza = quandoSucesso)
-            .execute()
+        }, quandoFinaliza = {
+            liveData.value = it
+        }).execute()
+        return liveData
     }
 
     private fun buscaNaApi(
