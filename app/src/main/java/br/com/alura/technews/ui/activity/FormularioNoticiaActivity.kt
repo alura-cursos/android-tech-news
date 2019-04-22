@@ -24,9 +24,9 @@ class FormularioNoticiaActivity : AppCompatActivity() {
     private val noticiaId: Long by lazy {
         intent.getLongExtra(NOTICIA_ID_CHAVE, 0)
     }
-    private val repository by lazy {
-        NoticiaRepository(AppDatabase.getInstance(this).noticiaDAO)
-    }
+//    private val repository by lazy {
+//        NoticiaRepository(AppDatabase.getInstance(this).noticiaDAO)
+//    }
     private val viewModel by lazy {
         val factory = FormularioNoticiaViewModelFactory(repository)
         ViewModelProviders.of(this, factory)
@@ -74,28 +74,13 @@ class FormularioNoticiaActivity : AppCompatActivity() {
     }
 
     private fun salva(noticia: Noticia) {
-        val falha = { _: String? ->
-            mostraErro(MENSAGEM_ERRO_SALVAR)
-        }
-        val sucesso = { _: Noticia ->
-            finish()
-        }
-
-        if (noticia.id > 0) {
-            repository.edita(
-                noticia,
-                quandoSucesso = sucesso,
-                quandoFalha = falha
-            )
-        } else {
-            viewModel.salva(noticia).observe(this, Observer {
-                if(it.erro == null){
-                    finish()
-                } else {
-                    mostraErro(MENSAGEM_ERRO_SALVAR)
-                }
-            })
-        }
+        viewModel.salva(noticia).observe(this, Observer {
+            if (it.erro == null) {
+                finish()
+            } else {
+                mostraErro(MENSAGEM_ERRO_SALVAR)
+            }
+        })
     }
 
 
