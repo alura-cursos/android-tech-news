@@ -12,7 +12,7 @@ import br.com.alura.technews.model.Noticia
 interface NoticiaDAO {
 
     @Query("SELECT * FROM Noticia ORDER BY id DESC")
-    fun buscaTodos(): List<Noticia>
+    fun buscaTodos(): LiveData<List<Noticia>>
 
     @Insert(onConflict = REPLACE)
     fun salva(noticia: Noticia)

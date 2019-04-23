@@ -19,6 +19,7 @@ class NoticiaRepository(
             noticiasEncontradas.value = Resource(dado = it)
         }
         buscaInterno(quandoSucesso = atualizaListaNoticias)
+        noticiasEncontradas.value = buscaInterno().value
         buscaNaApi(quandoSucesso = atualizaListaNoticias,
             quandoFalha = { erro ->
                 val resourceAtual = noticiasEncontradas.value
@@ -73,26 +74,20 @@ class NoticiaRepository(
     }
 
     private fun buscaNaApi(
-        quandoSucesso: (List<Noticia>) -> Unit,
         quandoFalha: (erro: String?) -> Unit
     ) {
         webclient.buscaTodas(
             quandoSucesso = { noticiasNovas ->
                 noticiasNovas?.let {
-                    salvaInterno(noticiasNovas, quandoSucesso)
+                    salvaInterno(noticiasNovas)
                 }
             }, quandoFalha = quandoFalha
         )
     }
 
-    private fun buscaInterno(quandoSucesso: (List<Noticia>) -> Unit) {
-        BaseAsyncTask(quandoExecuta = {
-            dao.buscaTodos()
-        }, quandoFinaliza = {
-            quandoSucesso(it)
-        }).execute()
+    private fun buscaInterno() : LiveData<List<Noticia>> {
+        return dao.buscaTodos()
     }
-
 
     private fun salvaNaApi(
         noticia: Noticia,
@@ -110,14 +105,12 @@ class NoticiaRepository(
     }
 
     private fun salvaInterno(
-        noticias: List<Noticia>,
-        quandoSucesso: (noticiasNovas: List<Noticia>) -> Unit
+        noticias: List<Noticia>
     ) {
         BaseAsyncTask(
             quandoExecuta = {
                 dao.salva(noticias)
-                dao.buscaTodos()
-            }, quandoFinaliza = quandoSucesso
+            }, quandoFinaliza = {}
         ).execute()
     }
 
