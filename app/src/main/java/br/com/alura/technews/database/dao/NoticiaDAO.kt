@@ -1,5 +1,6 @@
 package br.com.alura.technews.database.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -20,7 +21,7 @@ interface NoticiaDAO {
     fun remove(noticia: Noticia)
 
     @Query("SELECT * FROM Noticia WHERE id = :id")
-    fun buscaPorId(id: Long): Noticia?
+    fun buscaPorId(id: Long): LiveData<Noticia?>
 
     @Insert(onConflict = REPLACE)
     fun salva(noticias: List<Noticia>)
