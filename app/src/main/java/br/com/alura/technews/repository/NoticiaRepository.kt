@@ -1,6 +1,7 @@
 package br.com.alura.technews.repository
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import br.com.alura.technews.asynctask.BaseAsyncTask
 import br.com.alura.technews.database.dao.NoticiaDAO
@@ -12,23 +13,31 @@ class NoticiaRepository(
     private val webclient: NoticiaWebClient = NoticiaWebClient()
 ) {
 
-    private val noticiasEncontradas = MutableLiveData<Resource<List<Noticia>?>>()
+    private val mediador = MediatorLiveData<Resource<List<Noticia>?>>()
 
     fun buscaTodos(): LiveData<Resource<List<Noticia>?>> {
-        val atualizaListaNoticias: (List<Noticia>) -> Unit = {
-            noticiasEncontradas.value = Resource(dado = it)
+
+        mediador.addSource(buscaInterno()) { noticiasEncontradas ->
+            mediador.value = Resource(dado = noticiasEncontradas)
         }
-        buscaInterno(quandoSucesso = atualizaListaNoticias)
-        noticiasEncontradas.value = buscaInterno().value
-        buscaNaApi(quandoSucesso = atualizaListaNoticias,
+
+        val falhasDaWebApiLiveData = MutableLiveData<Resource<List<Noticia>?>>()
+        mediador.addSource(falhasDaWebApiLiveData) {resourceDeFalha ->
+            val resourceAtual = mediador.value
+            val resourceNovo: Resource<List<Noticia>?> = if(resourceAtual != null){
+                Resource(dado = resourceAtual.dado, erro = resourceDeFalha.erro)
+            } else {
+                resourceDeFalha
+            }
+            mediador.value = resourceNovo
+        }
+
+        buscaNaApi(
             quandoFalha = { erro ->
-                val resourceAtual = noticiasEncontradas.value
-                val resourceDeFalha = criaResourceDeFalha<List<Noticia>?>(
-                    resourceAtual, erro
-                )
-                noticiasEncontradas.value = resourceDeFalha
+                falhasDaWebApiLiveData.value = Resource(dado = null, erro = erro)
             })
-        return noticiasEncontradas
+
+        return mediador
     }
 
     fun salva(
